@@ -1,9 +1,10 @@
 flask
 flask-cors
 python-dotenv
-google-generativeai
+google-genai
 PyPDF2
 python-docx
 faiss-cpu
 sentence-transformers
-numpy
+numpy<2
+werkzeug
