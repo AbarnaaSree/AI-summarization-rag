@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>RAG AI System</title>
+
+<!-- ✅ Markdown parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 60%;
+    margin: 50px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 10px;
+    margin: 10px;
+    width: 70%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* ✅ FIXED OUTPUT STYLE */
+#output {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    text-align: left;
+    min-height: 80px;
+
+    /* IMPORTANT for markdown */
+    white-space: normal;
+    line-height: 1.6;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📄 RAG AI Document Chat</h1>
+
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload Document</button>
+    <button onclick="summarizeDoc()">✨ Summarize Document</button>
+
+    <hr>
+
+    <input type="text" id="question" placeholder="Ask a question about the document...">
+    <button onclick="askQuestion()">Ask</button>
+
+    <div id="output">Result will appear here...</div>
+
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:5000";
+
+const output = document.getElementById("output");
+
+
+// ---------------- UPLOAD FILE ----------------
+async function uploadFile() {
+
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    output.innerText = "Uploading and indexing document...";
+
+    try {
+        const res = await fetch(`${API}/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        output.innerText = data.message || data.error;
+
+    } catch (err) {
+        output.innerText = "Error connecting to backend";
+    }
+}
+
+
+// ---------------- SUMMARIZE DOCUMENT ----------------
+async function summarizeDoc() {
+
+    output.innerText = "Summarizing...";
+
+    try {
+        const res = await fetch(`${API}/summarize`, {
+            method: "POST"
+        });
+
+        const data = await res.json();
+
+        console.log("SUMMARY:", data);
+
+        // ✅ IMPORTANT FIX: Markdown → HTML
+        output.innerHTML = marked.parse(data.summary || data.error);
+
+    } catch (err) {
+        output.innerText = "Error generating summary";
+    }
+}
+
+
+// ---------------- ASK QUESTION ----------------
+async function askQuestion() {
+
+    const question = document.getElementById("question").value;
+
+    if (!question.trim()) {
+        alert("Please enter a question");
+        return;
+    }
+
+    output.innerText = "Thinking...";
+
+    try {
+        const res = await fetch(`${API}/ask`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+
+        output.innerHTML = marked.parse(data.answer || data.error);
+
+    } catch (err) {
+        output.innerText = "Error connecting to backend";
+    }
+}
+
+</script>
+
+</body>
+</html>
