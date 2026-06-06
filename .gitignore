@@ -1,24 +1,4 @@
-# Python
+.env
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Virtual environment
-venv/
-.env
-
-# Cache
-.pytest_cache/
-
-# Chroma database
-chroma_db/
-
-# Uploaded files
-uploads/
-
-# IDE
-.vscode/
-
-# OS
-.DS_Store
+uploads/*

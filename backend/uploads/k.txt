@@ -1,3 +1,0 @@
-The technical discussion conducted by Kishore Sir provided a comprehensive overview of the technologies, architecture, and workflows used at UnAbandon AI. The session was highly informative and helped us understand how modern AI-driven applications are designed, developed, and deployed in a real-world industry environment.
-
-One of the key topics discussed was the overall solution architecture of the UnAbandon AI platform. We learned how users interact with the application through a React-based frontend, which communicates with backend services developed using FastAPI
